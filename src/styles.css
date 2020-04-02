@@ -262,11 +262,11 @@ body {
   color: #dd4b39;
 }
 
-/* Barra de busca de restaurantes */
+/* Barra de busca restaurantes*/
 
 .search-link {
-    cursor: pointer;
-    color: #555;
+  cursor: pointer;
+  color: #555;
 }
 
 .search-link:hover {
@@ -274,6 +274,6 @@ body {
 }
 
 .search-bar {
-    opacity: 0;
-    max-height: 0px;
+  opacity: 0;
+  max-height: 0px;
 }

@@ -1,17 +1,10 @@
+import { trigger, style, state, transition, animate } from '@angular/animations';
+import { RestaurantsService } from './restaurants.service';
+import { Restaurant } from './restaurant/restaurant.model';
 import { Component, OnInit } from '@angular/core';
-import {trigger, state, style, transition, animate} from '@angular/animations'
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
-
-import {Restaurant} from './restaurant/restaurant.model'
-import {RestaurantsService} from './restaurants.service'
-
-import 'rxjs/add/operator/switchMap'
-import 'rxjs/add/operator/do'
-import 'rxjs/add/operator/debounceTime'
-import 'rxjs/add/operator/distinctUntilChanged'
-import 'rxjs/add/operator/catch'
-import 'rxjs/add/observable/from'
-import {Observable} from 'rxjs/Observable'
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Observable, from } from 'rxjs';
+import { tap, switchMap, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'mt-restaurants',
@@ -20,27 +13,29 @@ import {Observable} from 'rxjs/Observable'
     trigger('toggleSearch', [
       state('hidden', style({
         opacity: 0,
-        "max-height": "0px"
+        maxHeight: '0px'
       })),
       state('visible', style({
         opacity: 1,
-        "max-height": "70px",
-        "margin-top": "20px"
+        maxHeight: '70px',
+        marginTop: '20px', // CamelCase marginTop ao invés de margin-top
       })),
-      transition('* => *', animate('250ms 0s ease-in-out'))
-    ])
-  ]
+      transition('* => *', animate('250ms 0s ease-in-out')),
+    ]),
+  ],
+
 })
+
 export class RestaurantsComponent implements OnInit {
 
-  searchBarState = 'hidden'
+  searchBarState = 'hidden';
   restaurants: Restaurant[]
 
-  searchForm: FormGroup
-  searchControl: FormControl
+  searchForm: FormGroup;
+  searchControl: FormControl;
 
   constructor(private restaurantsService: RestaurantsService,
-              private fb: FormBuilder) { }
+    private fb: FormBuilder) { }
 
   ngOnInit() {
 
@@ -50,20 +45,21 @@ export class RestaurantsComponent implements OnInit {
     })
 
     this.searchControl.valueChanges
-        .debounceTime(500)
-        .distinctUntilChanged()
-        .switchMap(searchTerm =>
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap(searchTerm =>
           this.restaurantsService
             .restaurants(searchTerm)
-            .catch(error=>Observable.from([])))
-        .subscribe(restaurants => this.restaurants = restaurants)
+            .pipe(catchError(error => from([]))))
+      )
+      .subscribe(restaurants => this.restaurants = restaurants)
 
     this.restaurantsService.restaurants()
       .subscribe(restaurants => this.restaurants = restaurants)
   }
 
-  toggleSearch(){
-    this.searchBarState = this.searchBarState === 'hidden' ? 'visible' : 'hidden'
+  toggleSearch() {
+    this.searchBarState = this.searchBarState === 'hidden' ? 'visible' : 'hidden';
   }
-
 }

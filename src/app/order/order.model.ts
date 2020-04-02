@@ -1,15 +1,18 @@
 class Order {
-  constructor(
-    public address: string,
-    public number: number,
-    public optionalAddress: string,
-    public paymentOption: string,
-    public orderItems: OrderItem[] = []
-  ){}
+    constructor(
+        public adrres: string,
+        public number: number,
+        public optionlAdress: string,
+        public paymentOption: string,
+        public orderItem: OrderItem[] = [],
+        public id?: string
+    ) { }
 }
 
 class OrderItem {
-  constructor(public quantity: number, public menuId: string){}
+    constructor(public quantity: number, public menuId: string) {
+
+    }
 }
 
-export {Order, OrderItem}
+export { Order, OrderItem }
